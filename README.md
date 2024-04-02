@@ -1,11 +1,9 @@
-# Obsidian-Colored-Sidebar v1.0.0
+# Obsidian-Colored-Sidebar v2.0.0
 ## A Colored Sidebar CSS Snippet for Obsidian.
 
-<center>
-Create a <a href="https://youtu.be/rAkerV8rlow">colorfully cascading</a> Obsidian sidebar!
+### *Create a [colorfully cascading](https://youtu.be/rAkerV8rlow) Obsidian sidebar!*
 
-<img src="./example.png" width="50%">
-</center>
+![Example](./example.png)
 
 This snippet targets folders beginning with numbered prefixes, and applies full
 color formatting based on the root colors listed inside the snippet. The prefixes are both
@@ -16,4 +14,4 @@ customization. Just swap out the color variable names in the prefix groups.
 
 Goes great with the [Iconize](https://github.com/FlorianWoelki/obsidian-iconize) plugin!
 
-<center><i>Inspired by the "Coloured Folders" snippet by Lithou.</i></center>
+*Inspired by the "Coloured Folders" snippet by Lithou.*
