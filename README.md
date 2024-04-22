@@ -20,6 +20,8 @@ By default, the snippet targets folders beginning with numbered prefixes (00 tho
 ### Customizing Colors
 To customize the colors, prefixes, and number of colors, you’ll need to open up the CSS snippet in the text editor of your choice. Under the `root`, you’ll see several color variables with their corresponding hexadecimal code values. To modify a color, just change out the hex value with your new color value. If you wish to add a new color to the list, just follow the pattern and add a new variable in this section.
 
+To modify a specific prefix, change the variable under `--var-XX` to an existing colour, or replace `var(--COLOUR)` with the hexcode of the new colour
+
 ### Customizing Prefixes
 Further down in the CSS file, you’ll see the CSS class names targeting folders, named something like `.nav-folder-title[data-path^="00"]`. There are currently four of these classes that target **each** colored group, which you can quickly tell apart by the prefix they target (in this example, `"00"`). If you wish to change the prefixes to any other number, letter, or word, just replace the old numbers in quotations with your new values. If you'd like to select a folder in some way other than by a prefix, [this article](https://css-tricks.com/almanac/selectors/a/attribute/) shows how to modify the selector in additional ways.
 
