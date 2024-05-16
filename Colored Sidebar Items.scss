@@ -1,0 +1,260 @@
+/*------------------------------------------------------------------------------
+               Obsidian Colored Sidebar Items by CyanVoxel v2.0.0               
+
+                   A colored sidebar CSS snippet inspired by
+                   the "Coloured Folders" snippet by Lithou.
+
+                   Tweaks to the snippet made by xavimiranda, in
+                    order to generate the colors procedurally.
+------------------------------------------------------------------------------*/
+
+@use 'sass:string';
+@use 'sass:math';
+$alphabet: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+//                           HOW TO COMPILE THE CSS FILE
+// 1. install sass. if using npm run the command
+//        npm install -g sass
+// 2. run the watch command to compile any changes made to the file automatically
+//        sass -w .
+
+//                                HOW TO CONFIGURE
+// STEP 1. determine total combinations of colors, to calculate the colors
+// Calculate the total possible combination for the possible root folders, 
+// based on the indexing system.
+// CyanVoxel uses double digit indexing which gives a total of 100 colors
+// I chose a 3 digit system for myself: XXX
+//                                      ^ ^
+//                            Category  ┘ │
+//              double digit subcategory  ┘
+// This gives me 36 total categories since the first character can be a number 
+// or a letter (0 through 9 + A through Z)
+// Another example would be a double character system would be 26*26 = 676 total combinations
+$total_combinations: 36;
+
+// STEP 2. Determine how much of the HSL to use
+// Range is a number from 0 to 100 representing the percentage of the color wheel 
+// in HSL to use.
+// Examples:
+//   - 100 will go from red to red
+//   - 90 will cut off the final red, ending in a pinkish hue
+//   - 50 will go from red to light blues
+// Default value: 90
+$range: 90;
+
+// STEP 3. Change the optional parameters
+// offset: 
+//   will change where the colors start. This is given in degrees from 0 to 360
+//   0 starts in reds
+//   40 yellows
+//   90 greens
+//   170 light blues
+//   210 dark blues
+//   270 purples/pinks
+//   330 reds (again, its a wheel :P)
+//
+// saturation: 
+//   intensity or purity of the color, ranging from 0% (gray) to 100% (full color).
+//   recommended saturation: >70%;
+//
+// lightness:
+//   brightness of the color, ranging from 0% (black) to 100% (white), 
+//   with 50% being the neutral midpoint.
+//   recommended range: 50%-60%
+$offset: 0;
+$saturation: 100%;
+$lightness: 55%;
+
+:root {
+	/* ================================ Colors ================================ */
+	--red: #e22c3c; /* Default Prefix: None */
+	--red-orange: #e9404b; /* Default Prefix: None */
+	--orange: #ee6748; /* Default Prefix: None */
+	--amber: #fa9f50; /* Default Prefix: None */
+	--yellow: #ffd85e; /* Default Prefix: None */
+	--lime: #97e768; /* Default Prefix: None */
+	--mint: #52eea3; /* Default Prefix: 00 */
+	--cyan: #51e1e9; /* Default Prefix: 01 */
+	--cool-cyan: #43cfea; /* Default Prefix: None */
+	--light-blue: #54b6f8; /* Default Prefix: 02 */
+	--blue: #437cf3; /* Default Prefix: 03 */
+	--blue-violet: #6f51f4; /* Default Prefix: None */
+	--violet: #9446f8; /* Default Prefix: 04 */
+	--purple: #c952ed; /* Default Prefix: 05 */
+	--magenta: #e54f9b; /* Default Prefix: 06 */
+	--hot-red: #e3365e; /* Default Prefix: 07 */
+	--cool-gray: #515768; /* Default Prefix: 99 */
+
+	--default-text-color: #d0d0d0;
+	--highlight: #fff;
+	--shadow: #0b0c2c;
+
+	--nav-item-weight-hover: bold;
+}
+
+/* Light Theme Specific Properties */
+.theme-light {
+	--contrast-color: var(--shadow);
+	--default-text-color: var(--shadow);
+	--bg-contrast-amount: 70%;
+	--fg-contrast-amount: 30%;
+	--medium-contrast-amount: 60%;
+	--active-contrast-amount: 30%;
+
+	/* Darker Versions of Bright Colors for Light Theme */
+	--yellow: color-mix(in srgb, #ffd85e 90%, var(--shadow));
+	--lime: color-mix(in srgb, #97e768 90%, var(--shadow));
+	--mint: color-mix(in srgb, #52eea3 85%, var(--shadow));
+	--cyan: color-mix(in srgb, #51e1e9 85%, var(--shadow));
+	--cool-cyan: color-mix(in srgb, #43cfea 85%, var(--shadow));
+	--light-blue: color-mix(in srgb, #54b6f8 90%, var(--shadow));
+}
+
+/* Dark Theme Specific Properties */
+.theme-dark {
+	--contrast-color: var(--highlight);
+	--bg-contrast-amount: 15%;
+	--fg-contrast-amount: 40%;
+	--medium-contrast-amount: 20%;
+	--active-contrast-amount: 10%;
+}
+
+/* All Folder Titles */
+.nav-folder-title {
+	font-weight: bold;
+	border-radius: 5px;
+}
+
+/* Narrower Padding on Desktop*/
+@media only screen and (min-width: 768px) {
+	.nav-file-title,
+	.nav-folder-title {
+		/* padding: 3px 5px 2px 4px !important; */
+		padding-top: 3px !important;
+		padding-right: 5px !important;
+		padding-bottom: 2px !important;
+		padding-left: 15px;
+	}
+}
+
+@mixin nav-folder-title($dataPath, $color) {
+	.nav-folder-title[data-path^='#{$dataPath}'] {
+		color: $color;
+		--nav-item-color-hover: color-mix(
+			in srgb,
+			#{$color} var(--fg-contrast-amount),
+			var(--contrast-color)
+		);
+		--nav-item-background-hover: color-mix(
+			in srgb,
+			#{$color} var(--bg-contrast-amount),
+			transparent
+		);
+		--background-modifier-border-focus: color-mix(
+			in srgb,
+			#{$color} 40%,
+			transparent
+		);
+		--nav-collapse-icon-color: color-mix(
+			in srgb,
+			#{$color} 60%,
+			transparent
+		);
+	}
+
+	.nav-folder-title[data-path^='#{$dataPath}']:hover {
+		--nav-collapse-icon-color: color-mix(
+			in srgb,
+			#{$color} 60%,
+			var(--contrast-color)
+		);
+	}
+
+	.tree-item-children
+		.nav-folder:has(.nav-folder-title[data-path^='#{$dataPath}']) {
+		--nav-indentation-guide-color: color-mix(
+			in srgb,
+			#{$color} var(--medium-contrast-amount),
+			transparent
+		);
+	}
+
+	.tree-item-children
+		.nav-folder:has(.nav-folder-title[data-path^='#{$dataPath}'])
+		.nav-file-title {
+		color: color-mix(
+			in srgb,
+			#{$color} var(--medium-contrast-amount),
+			var(--default-text-color)
+		);
+		--nav-item-background-hover: color-mix(
+			in srgb,
+			color-mix(in srgb, #{$color} 50%, var(--highlight))
+				var(--bg-contrast-amount),
+			transparent
+		);
+		--background-modifier-border-focus: color-mix(
+			in srgb,
+			#{$color} 40%,
+			transparent
+		);
+		--nav-item-background-active: color-mix(
+			in srgb,
+			#{$color} var(--active-contrast-amount),
+			transparent
+		);
+	}
+}
+
+
+@function lerp($value, $min, $max) {
+  @return calc((1 - $value) * $min + $value * $max);
+}
+
+@function remap($value, $from1, $to1, $from2, $to2) {
+    @return calc(($value - $from1) / ($to1 - $from1) * ($to2 - $from2) + $from2);
+}
+
+@function generateColor($index, $total_combinations) {
+  $index_perc: calc(($index * 100) / $total_combinations);
+  $max_hue: remap($range, 0, 100, 0, 360);
+  $hue: lerp(calc($index_perc / 100), 0, $max_hue);
+  @return hsl(calc($hue + $offset), $saturation, $lightness);
+}
+
+// Loop every folder name from 0 to 99 (CyanVoxel organizational system)
+@for $i from 0 through 99 {
+  $color: generateColor($i, 100);
+  $dataPath: $i;
+  @if $i < 10 {
+    $dataPath: "0#{$i}"    
+  }
+  @include nav-folder-title("#{$dataPath}", $color)
+}
+
+
+// //                            Additional Examples
+// // Loop through hundreds (e.g., 100, 200, 300, ..., 900)
+// @for $i from 0 through 9 {
+// 	$color: generateColor($i, $total_combinations);
+// 	@include nav-folder-title('#{$i}0', $color);
+// }
+
+// // Loop through any one letter followed by two digits (e.g., A00, B01, ..., Z99)
+// @for $index from 1 to 27 {
+// 	$current-index: calc($index + 10);
+// 	$letter: string.slice($alphabet, $index, $index);
+// 	$color: generateColor($current-index, $total_combinations);
+// 	@include nav-folder-title('#{$letter}0', $color);
+// }
+
+// Example for folders starting with two capital letters
+// @for $l2 from 1 to 27 {
+// 	@for $l3 from 1 to 27 {
+// 		$current-index: calc($l3 + ($l2 * 26));
+// 		$color: generate-color($current-index, 729);
+// 		$letter2: string.slice($alphabet, $l2, $l2);
+// 		$letter3: string.slice($alphabet, $l3, $l3);
+// 		@include nav-folder-title('#{$letter2}#{$letter3}', $color);
+// 	}
+// }
